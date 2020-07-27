@@ -1,2 +1,2 @@
-# routing_gym
+# Routing Gym
 Routing Gym Environment for RL
