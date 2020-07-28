@@ -1,22 +1,23 @@
 import numpy as np
+import dgl
 import networkx as nx
 import matplotlib.pyplot as plt
 from networkx.algorithms.simple_paths import shortest_simple_paths
 from networkx.linalg.graphmatrix import adjacency_matrix
 
-
 class RoutingEnv():
-    def __init__(self, nx_G, k=4, max_b=200):
+    def __init__(self, nx_g, k=4, max_b=200):
         self.k = k
         self.max_bandwidth = max_b
-        self.G = nx_G
-        self.adjacency_matrix = adjacency_matrix(self.G)
-        self.n = self.G.number_of_nodes()
+        self.nx_g = nx_g
+        self.adjacency_matrix = adjacency_matrix(self.nx_g)
+        self.n = self.nx_g.number_of_nodes()
         self.traffic_matrix = None
         self.actions = None
         self.shortest_paths = None
         self.bandwidth = None
         self.done = True
+        self.dgl_g = dgl.Graph(self.nx_g)
 
 
     def get_actions(self):
@@ -73,21 +74,21 @@ class RoutingEnv():
         return observation, reward, self.done
 
     def sample_action(self):
-        return np.random.choice(self.k)
-        
+        return np.random.choice(self.k)      
 
-P = nx.petersen_graph()
-#nx.draw(P, with_labels=True)
-env = RoutingEnv(P)
-returns = []
-for i in range(1000):
-    total = 0
-    env.reset()
-    done = False
-    while not done:
-        obs, reward, done = env.step(env.sample_action())
-        total += reward
-    returns.append(total)
+if __name__ == '__main__':
+    P = nx.petersen_graph()
+    #nx.draw(P, with_labels=True)
+    env = RoutingEnv(P)
+    returns = []
+    for i in range(1000):
+        total = 0
+        env.reset()
+        done = False
+        while not done:
+            obs, reward, done = env.step(env.sample_action())
+            total += reward
+        returns.append(total)
 
-plt.plot(returns)
-plt.show()
+    plt.plot(returns)
+    plt.show()
